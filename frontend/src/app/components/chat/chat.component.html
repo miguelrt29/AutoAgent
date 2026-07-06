@@ -1,0 +1,71 @@
+<div class="layout">
+
+  <header class="header-bar">
+    <div class="header-left">
+      <span class="logo-dot"></span>
+      <span class="logo-text">AutoAgent</span>
+    </div>
+    <div class="header-right">
+      <span class="badge">Powered by Groq + Llama 3.3</span>
+    </div>
+  </header>
+
+  <div class="main-area">
+
+    <div class="chat-panel">
+      <div class="messages-area" #chatContainer>
+
+        <div class="empty-state" *ngIf="chatSession.messages.length === 0">
+          <div class="empty-icon"><span class="empty-symbol">✦</span></div>
+          <div class="empty-title">AutoAgent</div>
+          <div class="empty-sub">Your AI-powered automation assistant</div>
+        </div>
+
+        <div class="message" *ngFor="let msg of chatSession.messages" [ngClass]="msg.role">
+          <div class="bubble" [ngClass]="msg.role">
+            <div class="message-content" *ngIf="msg.role === 'assistant'" [innerHTML]="msg.content | markdown"></div>
+            <span *ngIf="msg.role === 'user'">{{ msg.content }}</span>
+            <div class="typing-indicator" *ngIf="chatSession.isStreaming && msg === chatSession.messages[chatSession.messages.length - 1] && msg.role === 'assistant' && (msg.content === '' || msg.content === null)">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="cursor" *ngIf="chatSession.isStreaming && msg === chatSession.messages[chatSession.messages.length - 1] && msg.role === 'assistant' && msg.content"></span>
+          </div>
+          <div class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</div>
+        </div>
+
+      </div>
+
+      <div class="input-bar">
+        <div class="input-inner">
+          <textarea
+            [(ngModel)]="userInput"
+            (keydown.enter)="onKeyDown($event)"
+            (input)="onInput($event)"
+            placeholder="Ask anything..."
+            #inputEl
+          ></textarea>
+          <button (click)="sendMessage()" [disabled]="chatSession.isStreaming || !userInput.trim()">
+            →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tools-panel">
+      <div class="tools-header">TOOLS EXECUTED</div>
+
+      <div class="tool-list" *ngIf="chatSession.toolCalls.length > 0">
+        <div class="tool-card" *ngFor="let tc of chatSession.toolCalls">
+          <span class="tool-badge" [ngClass]="badgeClass(tc.tool)">{{ tc.tool }}</span>
+          <pre class="tool-json">{{ tc.input | json }}</pre>
+        </div>
+      </div>
+
+      <div class="tools-empty" *ngIf="chatSession.toolCalls.length === 0">No tools used yet</div>
+    </div>
+
+  </div>
+
+</div>
