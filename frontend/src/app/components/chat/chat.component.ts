@@ -102,9 +102,10 @@ export class ChatComponent {
       },
       error: (err) => {
         console.error('Stream error:', err);
+        const msg = err.message || err.toString();
         this.chatSession.messages.push({
           role: 'assistant',
-          content: 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo en localhost:8000',
+          content: `Error de conexión: ${msg}`,
           timestamp: new Date(),
         });
         this.chatSession.isStreaming = false;
