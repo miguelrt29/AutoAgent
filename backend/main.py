@@ -3,12 +3,24 @@
 import json
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from agent import Agent, SESSIONS, LOCAL_TOOLS_DEFS
 from config import CONFIG
 from schemas import ChatRequest, ToolEvent, TextEvent, ErrorEvent, DoneEvent
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
 
 AVAILABLE_TOOLS = [
     {"name": "web_search", "description": "Search the web using DuckDuckGo", "parameters": ["query", "max_results"]},
@@ -26,6 +38,8 @@ if CONFIG["ENABLE_LOCAL_TOOLS"]:
         })
 
 app = FastAPI(title="AutoAgent API", version="1.0.0")
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

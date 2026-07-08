@@ -1,14 +1,19 @@
 """Tool that executes shell commands restricted to an allowed list from CONFIG."""
 
+import shlex
 import subprocess
 
 from config import CONFIG
 
 
 def run_command(command: str) -> dict:
-    """Run a shell command if the base command is in ALLOWED_COMMANDS."""
+    """Run a shell command if the base command is in ALLOWED_COMMANDS.
+
+    Uses shell=False to prevent shell injection — commands are split
+    safely via shlex.split() and executed as a list.
+    """
     try:
-        cmd_parts = command.strip().split()
+        cmd_parts = shlex.split(command)
         if not cmd_parts:
             return {"success": False, "result": "No command provided."}
 
@@ -22,8 +27,8 @@ def run_command(command: str) -> dict:
             }
 
         result = subprocess.run(
-            command,
-            shell=True,
+            cmd_parts,
+            shell=False,
             capture_output=True,
             text=True,
             timeout=15,

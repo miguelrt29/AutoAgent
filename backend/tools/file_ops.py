@@ -17,10 +17,8 @@ def read_file(path: str) -> dict:
     try:
         resolved = _resolve_safe(path)
 
-        if not resolved.exists():
-            return {"success": False, "result": f"File not found: {path}"}
-        if not resolved.is_file():
-            return {"success": False, "result": f"Path is not a file: {path}"}
+        resolved.exists()
+        resolved.is_file()
 
         content = resolved.read_text(encoding="utf-8")
 
@@ -31,6 +29,8 @@ def read_file(path: str) -> dict:
 
     except ValueError as e:
         return {"success": False, "result": str(e)}
+    except PermissionError:
+        return {"success": False, "result": f"Permission denied: {path}"}
     except Exception as e:
         return {"success": False, "result": f"Error reading file: {e}"}
 
@@ -40,6 +40,9 @@ def write_file(path: str, content: str) -> dict:
     try:
         resolved = _resolve_safe(path)
 
+        if resolved.exists() and not resolved.is_file():
+            return {"success": False, "result": f"Path exists and is not a file: {path}"}
+
         resolved.parent.mkdir(parents=True, exist_ok=True)
         resolved.write_text(content, encoding="utf-8")
 
@@ -47,5 +50,7 @@ def write_file(path: str, content: str) -> dict:
 
     except ValueError as e:
         return {"success": False, "result": str(e)}
+    except PermissionError:
+        return {"success": False, "result": f"Permission denied: {path}"}
     except Exception as e:
         return {"success": False, "result": f"Error writing file: {e}"}
