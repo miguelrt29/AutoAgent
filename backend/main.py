@@ -25,7 +25,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:4200",
         "http://127.0.0.1:4200",
-        "https://autoagent-ui.vercel.app",
+        "https://auto-agent-sage.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
