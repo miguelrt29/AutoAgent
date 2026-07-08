@@ -30,4 +30,5 @@ CONFIG = {
     "SMTP_USER": os.environ["SMTP_USER"],
     "SMTP_PASS": os.environ["SMTP_PASS"],
     "ALLOWED_COMMANDS": ALLOWED_COMMANDS,
+    "SENDGRID_API_KEY": os.environ.get("SENDGRID_API_KEY", ""),
 }

@@ -21,3 +21,5 @@ services:
         value: echo,pwd,ls
       - key: SENDGRID_API_KEY
         sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
