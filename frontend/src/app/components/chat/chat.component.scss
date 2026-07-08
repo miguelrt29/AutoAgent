@@ -427,3 +427,115 @@
   text-align: center;
   margin-top: 40px;
 }
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1024px) {
+  .chat-panel {
+    flex: 0 0 58%;
+  }
+  .tools-panel {
+    flex: 0 0 42%;
+  }
+  .message {
+    max-width: 80%;
+  }
+  .bubble.user {
+    max-width: 75%;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-bar {
+    padding: 0 14px;
+  }
+  .badge {
+    display: none;
+  }
+  .main-area {
+    flex-direction: column;
+  }
+  .chat-panel {
+    flex: 1;
+    min-height: 0;
+  }
+  .tools-panel {
+    display: none;
+  }
+  .messages-area {
+    padding: 16px;
+    gap: 14px;
+  }
+  .message {
+    max-width: 95%;
+  }
+  .bubble.user {
+    max-width: 90%;
+  }
+  .input-bar {
+    padding: 10px 12px;
+  }
+  .input-inner {
+    padding: 6px 6px 6px 14px;
+  }
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .empty-symbol {
+    font-size: 20px;
+  }
+  .empty-title {
+    font-size: 17px;
+  }
+  .empty-sub {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-bar {
+    padding: 0 10px;
+    height: 44px;
+  }
+  .logo-text {
+    font-size: 14px;
+  }
+  .logo-dot {
+    width: 6px;
+    height: 6px;
+  }
+  .messages-area {
+    padding: 12px;
+    gap: 10px;
+  }
+  .bubble {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+  .bubble.user {
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+  }
+  .bubble.assistant {
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 4px;
+  }
+  .message {
+    max-width: 98%;
+  }
+  .input-bar {
+    padding: 8px 10px;
+  }
+  .input-inner textarea {
+    font-size: 13px;
+    min-height: 22px;
+    max-height: 80px;
+  }
+  .input-inner button {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 14px;
+  }
+}
