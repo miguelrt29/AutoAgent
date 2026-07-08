@@ -1,10 +1,13 @@
 """FastAPI entrypoint: starts the server, registers routes, and initialises the app."""
 
 import json
+import re
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
 
 from agent import Agent, SESSIONS
 from schemas import ChatRequest, ToolEvent, TextEvent, ErrorEvent, DoneEvent
@@ -18,19 +21,46 @@ AVAILABLE_TOOLS = [
     {"name": "run_command", "description": "Execute a shell command", "parameters": ["command"]},
 ]
 
-app = FastAPI(title="AutoAgent API", version="1.0.0")
+ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+    re.compile(r"^https://.*\.vercel\.app$"),
+]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:4200",
-        "http://127.0.0.1:4200",
-        "https://auto-agent-sage.vercel.app",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+class DynamicCORSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        origin = request.headers.get("origin")
+        allowed = origin if origin else ""
+
+        if origin:
+            matched = False
+            for pattern in ALLOWED_ORIGINS:
+                if isinstance(pattern, re.Pattern):
+                    if pattern.match(origin):
+                        matched = True
+                        break
+                elif pattern == origin:
+                    matched = True
+                    break
+            allowed = origin if matched else ""
+
+        response: Response = await call_next(request)
+        if allowed:
+            response.headers["Access-Control-Allow-Origin"] = allowed
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Max-Age"] = "600"
+
+        if request.method == "OPTIONS":
+            return Response(status_code=200, headers=dict(response.headers))
+
+        return response
+
+
+app = FastAPI(title="AutoAgent API", version="1.0.0")
+app.add_middleware(DynamicCORSMiddleware)
 
 
 @app.get("/tools")
