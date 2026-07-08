@@ -186,7 +186,14 @@ IMPORTANT RULES:
 - When calling a tool, ALWAYS output the arguments as raw valid JSON — never wrap them in parentheses or extra characters.
 - max_results must always be an integer (e.g. 5), never a string.
 - Respond in the same language the user writes in.
-- Be concise and helpful."""
+- Be concise and helpful.
+
+RECOMMENDED FREE APIs (use these when the user asks for data):
+- Bitcoin/crypto price → CoinCap: https://api.coincap.io/v2/rates/bitcoin (no API key needed)
+- Exchange rates → CoinCap: https://api.coincap.io/v2/rates/{currency} (e.g. colombian-peso)
+- Weather → Open-Meteo: https://api.open-meteo.com/v1/forecast (no API key needed)
+- DO NOT use CoinGecko — it has strict rate limits (429 errors).
+- Always prefer APIs that don't require authentication keys."""
 
         while True:
             response = self.client.chat.completions.create(
