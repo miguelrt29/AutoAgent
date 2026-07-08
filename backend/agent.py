@@ -190,7 +190,7 @@ IMPORTANT RULES:
 
 RECOMMENDED FREE APIs (use these when the user asks for data):
 - Bitcoin/crypto price → CoinCap: https://api.coincap.io/v2/rates/bitcoin (no API key needed)
-- Exchange rates → CoinCap: https://api.coincap.io/v2/rates/{currency} (e.g. colombian-peso)
+- Exchange rates → CoinCap: https://api.coincap.io/v2/rates/{{currency}} (e.g. colombian-peso)
 - Weather → Open-Meteo: https://api.open-meteo.com/v1/forecast (no API key needed)
 - DO NOT use CoinGecko — it has strict rate limits (429 errors).
 - Always prefer APIs that don't require authentication keys."""
