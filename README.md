@@ -221,6 +221,22 @@ Puedes escribir estos prompts directamente en el chat:
 
 ---
 
+## 🔒 Seguridad
+
+AutoAgent incorpora las siguientes medidas de seguridad:
+
+| Medida | Descripción |
+|--------|-------------|
+| **Shell seguro** | `shell=False` + `shlex.split()` — metacaracteres (`;`, `\|`, `$()`) se tratan como texto literal, no como comandos |
+| **XSS prevenido** | `DOMPurify` sanitiza todo HTML generado por el LLM antes de inyectarlo en el DOM |
+| **SSRF protegido** | Bloqueo de IPs privadas (127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16) y metadatos cloud |
+| **Path traversal** | Validación que impide leer/escribir archivos fuera del directorio de trabajo |
+| **Security headers** | CSP, HSTS, X-Frame-Options, X-Content-Type-Options configurados en el backend |
+| **CORS** | Configuración abierta para previews de Vercel (API stateless sin autenticación) |
+| **Secrets** | Todas las credenciales vía variables de entorno; `.env` en `.gitignore` |
+
+---
+
 ## 👨‍💻 Autor
 
 **Miguel Angel Reyes Torres**
