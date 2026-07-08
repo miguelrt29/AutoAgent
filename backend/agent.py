@@ -11,31 +11,13 @@ from tools.shell_tool import run_command
 
 SESSIONS: dict[str, list] = {}
 
-TOOLS_MAP = {
-    "web_search": web_search,
+LOCAL_TOOLS_MAP = {
     "read_file": read_file,
     "write_file": write_file,
-    "send_email": send_email,
-    "call_api": call_api,
     "run_command": run_command,
 }
 
-TOOLS = [
-    {
-        "type": "function",
-        "function": {
-            "name": "web_search",
-            "description": "Search the web for current information.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string", "description": "The search query"},
-                    "max_results": {"type": "integer", "description": "Max results to return (default 5)"},
-                },
-                "required": ["query"],
-            },
-        },
-    },
+LOCAL_TOOLS_DEFS = [
     {
         "type": "function",
         "function": {
@@ -62,6 +44,45 @@ TOOLS = [
                     "content": {"type": "string", "description": "Content to write"},
                 },
                 "required": ["path", "content"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "run_command",
+            "description": "Execute a shell command (restricted to ALLOWED_COMMANDS).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Shell command to run"},
+                },
+                "required": ["command"],
+            },
+        },
+    },
+]
+
+BASE_TOOLS_MAP = {
+    "web_search": web_search,
+    "send_email": send_email,
+    "call_api": call_api,
+}
+
+TOOLS_MAP = {**BASE_TOOLS_MAP}
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "Search the web for current information.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "The search query"},
+                    "max_results": {"type": "integer", "description": "Max results to return (default 5)"},
+                },
+                "required": ["query"],
             },
         },
     },
@@ -98,21 +119,11 @@ TOOLS = [
             },
         },
     },
-    {
-        "type": "function",
-        "function": {
-            "name": "run_command",
-            "description": "Execute a shell command (restricted to ALLOWED_COMMANDS).",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "command": {"type": "string", "description": "Shell command to run"},
-                },
-                "required": ["command"],
-            },
-        },
-    },
 ]
+
+if CONFIG["ENABLE_LOCAL_TOOLS"]:
+    TOOLS_MAP.update(LOCAL_TOOLS_MAP)
+    TOOLS.extend(LOCAL_TOOLS_DEFS)
 
 
 def _coerce_args(tool_name: str, args: dict) -> dict:
@@ -162,11 +173,16 @@ class Agent:
     def run(self, user_message: str):
         self.messages.append({"role": "user", "content": user_message})
 
-        system_prompt = """You are AutoAgent, a helpful AI assistant with access to tools.
+        enable_local = CONFIG["ENABLE_LOCAL_TOOLS"]
+        available = "search the web, send emails, call an API"
+        if enable_local:
+            available += ", read/write files, run commands"
+
+        system_prompt = f"""You are AutoAgent, a helpful AI assistant with access to tools.
 
 IMPORTANT RULES:
 - For simple conversation (greetings, questions about yourself, general knowledge you already know): respond directly with text. DO NOT call any tool.
-- Only use tools when the user explicitly asks to: search the web, read/write files, send emails, call an API, or run a command.
+- Only use tools when the user explicitly asks to: {available}.
 - When calling a tool, ALWAYS output the arguments as raw valid JSON — never wrap them in parentheses or extra characters.
 - max_results must always be an integer (e.g. 5), never a string.
 - Respond in the same language the user writes in.

@@ -6,17 +6,24 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from agent import Agent, SESSIONS
+from agent import Agent, SESSIONS, LOCAL_TOOLS_DEFS
+from config import CONFIG
 from schemas import ChatRequest, ToolEvent, TextEvent, ErrorEvent, DoneEvent
 
 AVAILABLE_TOOLS = [
     {"name": "web_search", "description": "Search the web using DuckDuckGo", "parameters": ["query", "max_results"]},
-    {"name": "read_file", "description": "Read the contents of a file", "parameters": ["path"]},
-    {"name": "write_file", "description": "Write content to a file", "parameters": ["path", "content"]},
     {"name": "send_email", "description": "Send an email via SMTP", "parameters": ["to", "subject", "body"]},
     {"name": "call_api", "description": "Make an HTTP request to an external API", "parameters": ["url", "method", "headers", "body"]},
-    {"name": "run_command", "description": "Execute a shell command", "parameters": ["command"]},
 ]
+
+if CONFIG["ENABLE_LOCAL_TOOLS"]:
+    for td in LOCAL_TOOLS_DEFS:
+        fn = td["function"]
+        AVAILABLE_TOOLS.append({
+            "name": fn["name"],
+            "description": fn["description"],
+            "parameters": list(fn["parameters"]["properties"].keys()),
+        })
 
 app = FastAPI(title="AutoAgent API", version="1.0.0")
 
