@@ -12,6 +12,10 @@ REQUIRED_KEYS = [
     "ALLOWED_COMMANDS",
 ]
 
+OPTIONAL_KEYS = [
+    "SENDGRID_API_KEY",
+]
+
 missing = [key for key in REQUIRED_KEYS if key not in os.environ]
 if missing:
     raise ValueError(f"Missing required environment variable(s): {', '.join(missing)}")
@@ -30,4 +34,5 @@ CONFIG = {
     "SMTP_USER": os.environ["SMTP_USER"],
     "SMTP_PASS": os.environ["SMTP_PASS"],
     "ALLOWED_COMMANDS": ALLOWED_COMMANDS,
+    "SENDGRID_API_KEY": os.environ.get("SENDGRID_API_KEY", ""),
 }

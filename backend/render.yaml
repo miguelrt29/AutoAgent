@@ -17,3 +17,5 @@ services:
         sync: false
       - key: ALLOWED_COMMANDS
         value: echo,pwd,ls
+      - key: SENDGRID_API_KEY
+        sync: false
