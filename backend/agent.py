@@ -187,8 +187,9 @@ IMPORTANT RULES:
 - max_results must always be an integer (e.g. 5), never a string.
 - Respond in the same language the user writes in.
 - Be concise and helpful.
+- When the user asks for data (prices, rates, weather, etc.), call the API immediately. Do NOT explain what APIs exist — just call the right one and return the data.
 
-RECOMMENDED FREE APIs (use these when the user asks for data):
+RECOMMENDED FREE APIs:
 - Bitcoin/crypto price → CoinCap: https://api.coincap.io/v2/rates/bitcoin (no API key needed)
 - Exchange rates → CoinCap: https://api.coincap.io/v2/rates/{{currency}} (e.g. colombian-peso)
 - Weather → Open-Meteo: https://api.open-meteo.com/v1/forecast (no API key needed)
