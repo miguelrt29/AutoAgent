@@ -26,7 +26,6 @@ app.add_middleware(
         "http://localhost:4200",
         "http://127.0.0.1:4200",
         "https://autoagent-ui.vercel.app",
-        "*"  # temporary, will restrict after getting real Vercel URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
