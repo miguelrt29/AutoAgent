@@ -34,6 +34,9 @@ Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en
 - 🖥️ **Ejecución de comandos** — Ejecuta comandos shell restringidos a una lista blanca *(solo local)*
 - ⚡ **Streaming en tiempo real** — Las respuestas del agente llegan carácter por carácter vía SSE
 - 💬 **Memoria de sesión** — El agente recuerda el historial completo de la conversación
+- 📋 **Sidebar de conversaciones** — Lista persistente con selección, títulos generados automáticamente y orden por última actividad
+- 📌 **Anclar chats** — Fija conversaciones importantes al inicio del sidebar (en memoria, sin migraciones)
+- 🗑️ **Modal de confirmación** — Diálogo centrado antes de eliminar una conversación
 - 📊 **Panel de herramientas en vivo** — Visualiza cada tool que el agente ejecuta, con sus argumentos
 - 🌙 **Dark theme** — Interfaz oscura moderna con acentos morados
 - 🚀 **Despliegue cloud** — Backend en Render, frontend en Vercel
@@ -181,7 +184,11 @@ ng serve --open
 | `GET` | `/health` | Estado del servidor |
 | `GET` | `/tools` | Lista de herramientas disponibles |
 | `POST` | `/chat` | Envía un mensaje al agente (respuesta SSE en streaming) |
-| `GET` | `/sessions/{id}/history` | Historial de una sesión |
+| `GET` | `/sessions` | Lista todas las conversaciones (ordenadas, ancladas primero) |
+| `GET` | `/sessions/{id}` | Detalle de una conversación con sus mensajes |
+| `PUT` | `/sessions/{id}/title` | Actualiza el título de una conversación |
+| `PUT` | `/sessions/{id}/pin` | Ancla / desancla una conversación |
+| `DELETE` | `/sessions/{id}` | Elimina una conversación y sus mensajes |
 
 ---
 
