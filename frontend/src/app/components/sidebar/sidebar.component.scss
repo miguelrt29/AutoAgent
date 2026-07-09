@@ -50,7 +50,7 @@
   background: rgba(124, 58, 237, 0.08);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .sidebar-close {
     display: flex;
   }
@@ -205,7 +205,7 @@
   border-color: rgba(124, 58, 237, 0.25);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :host {
     position: fixed;
     top: 0;

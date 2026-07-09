@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   constructor(private sessionService: SessionService) {}
 
   ngOnInit(): void {
-    this.sidebarVisible = window.innerWidth > 768;
+    this.sidebarVisible = window.innerWidth > 1024;
     this.loadSessions();
   }
 
