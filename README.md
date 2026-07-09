@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 AutoAgent
+# AutoAgent
 
 **Agente de IA fullstack con ejecución de herramientas en tiempo real**
 
@@ -16,34 +16,34 @@
 
 ---
 
-## 📖 Descripción
+## Descripcion
 
-**AutoAgent** es un asistente de inteligencia artificial que recibe instrucciones en lenguaje natural y ejecuta acciones reales sobre tu computador y el mundo exterior. Puede buscar información en la web, leer y escribir archivos, enviar correos electrónicos, consultar APIs externas y ejecutar comandos shell — todo desde una interfaz web moderna con streaming en tiempo real.
+**AutoAgent** es un asistente de inteligencia artificial que recibe instrucciones en lenguaje natural y ejecuta acciones reales sobre tu computador y el mundo exterior. Puede buscar informacion en la web, leer y escribir archivos, enviar correos electronicos, consultar APIs externas y ejecutar comandos shell — todo desde una interfaz web moderna con streaming en tiempo real.
 
-Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en el frontend, con comunicación vía **Server-Sent Events (SSE)** para respuestas instantáneas.
-
----
-
-## ✨ Características
-
-- 🔍 **Búsqueda web** — Consulta DuckDuckGo y obtén resultados reales con títulos, descripciones y enlaces
-- 📄 **Lectura de archivos** — Lee archivos del sistema con protección contra path traversal *(solo local)*
-- ✏️ **Escritura de archivos** — Crea y sobrescribe archivos de texto *(solo local)*
-- 📧 **Envío de emails** — Envía correos vía SMTP (local) o SendGrid API (producción)
-- 🌐 **Llamadas a APIs** — Consulta APIs REST externas (GET/POST)
-- 🖥️ **Ejecución de comandos** — Ejecuta comandos shell restringidos a una lista blanca *(solo local)*
-- ⚡ **Streaming en tiempo real** — Las respuestas del agente llegan carácter por carácter vía SSE
-- 💬 **Memoria de sesión** — El agente recuerda el historial completo de la conversación
-- 📋 **Sidebar de conversaciones** — Lista persistente con selección, títulos generados automáticamente y orden por última actividad
-- 📌 **Anclar chats** — Fija conversaciones importantes al inicio del sidebar (en memoria, sin migraciones)
-- 🗑️ **Modal de confirmación** — Diálogo centrado antes de eliminar una conversación
-- 📊 **Panel de herramientas en vivo** — Visualiza cada tool que el agente ejecuta, con sus argumentos
-- 🌙 **Dark theme** — Interfaz oscura moderna con acentos morados
-- 🚀 **Despliegue cloud** — Backend en Render, frontend en Vercel
+Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en el frontend, con comunicacion via **Server-Sent Events (SSE)** para respuestas instantaneas.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Caracteristicas
+
+- **Busqueda web** — Consulta DuckDuckGo y obtén resultados reales con titulos, descripciones y enlaces
+- **Lectura de archivos** — Lee archivos del sistema con proteccion contra path traversal *(solo local)*
+- **Escritura de archivos** — Crea y sobrescribe archivos de texto *(solo local)*
+- **Envio de emails** — Envia correos via SMTP (local) o SendGrid API (produccion)
+- **Llamadas a APIs** — Consulta APIs REST externas (GET/POST)
+- **Ejecucion de comandos** — Ejecuta comandos shell restringidos a una lista blanca *(solo local)*
+- **Streaming en tiempo real** — Las respuestas del agente llegan caracter por caracter via SSE
+- **Memoria de sesion** — El agente recuerda el historial completo de la conversacion
+- **Sidebar de conversaciones** — Lista persistente con seleccion, titulos generados automaticamente y orden por ultima actividad
+- **Anclar chats** — Fija conversaciones importantes al inicio del sidebar (en memoria, sin migraciones)
+- **Modal de confirmacion** — Dialogo centrado antes de eliminar una conversacion
+- **Panel de herramientas en vivo** — Visualiza cada tool que el agente ejecuta, con sus argumentos
+- **Dark theme** — Interfaz oscura moderna con acentos morados
+- **Despliegue cloud** — Backend en Render, frontend en Vercel
+
+---
+
+## Stack Tecnologico
 
 | Backend | Frontend | Cloud |
 |---------|----------|-------|
@@ -57,7 +57,7 @@ Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 ┌─────────┐     ┌───────────┐     ┌──────────┐     ┌──────────┐
@@ -90,7 +90,7 @@ Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en
 
 ---
 
-## 📦 Instalación y Uso Local
+## Instalacion y Uso Local
 
 ### Requisitos previos
 
@@ -128,22 +128,22 @@ ng serve --open
 
 ---
 
-## ⚙️ Configuración (`.env`)
+## Configuracion (`.env`)
 
 | Variable | Requerida | Descripción |
 |----------|-----------|-------------|
-| `GROQ_API_KEY` | ✅ Sí | API key de Groq (gratis en console.groq.com) |
-| `SMTP_HOST` | ❌ No | Servidor SMTP (ej. `smtp.gmail.com`) |
-| `SMTP_PORT` | ❌ No | Puerto SMTP (ej. `587`) |
-| `SMTP_USER` | ❌ No | Tu correo electrónico |
-| `SMTP_PASS` | ❌ No | App Password de Gmail o contraseña SMTP |
-| `ALLOWED_COMMANDS` | ❌ No | Comandos shell permitidos separados por coma (ej. `ls,pwd,echo`) |
-| `SENDGRID_API_KEY` | ❌ No | API key de SendGrid para envío de emails en producción |
-| `ENABLE_LOCAL_TOOLS` | ❌ No | `true` para activar tools locales (read_file, write_file, run_command). Default: `false` |
+| `GROQ_API_KEY` | Si | API key de Groq (gratis en console.groq.com) |
+| `SMTP_HOST` | No | Servidor SMTP (ej. `smtp.gmail.com`) |
+| `SMTP_PORT` | No | Puerto SMTP (ej. `587`) |
+| `SMTP_USER` | No | Tu correo electrónico |
+| `SMTP_PASS` | No | App Password de Gmail o contraseña SMTP |
+| `ALLOWED_COMMANDS` | No | Comandos shell permitidos separados por coma (ej. `ls,pwd,echo`) |
+| `SENDGRID_API_KEY` | No | API key de SendGrid para envío de emails en producción |
+| `ENABLE_LOCAL_TOOLS` | No | `true` para activar tools locales (read_file, write_file, run_command). Default: `false` |
 
 ---
 
-## 🚀 Despliegue en Producción
+## Despliegue en Produccion
 
 ### Backend — Render
 
@@ -156,7 +156,7 @@ ng serve --open
    - `SENDGRID_API_KEY` (necesaria para enviar emails desde producción)
 5. Render se redeploya automáticamente con cada push a `main`
 
-> **Nota:** Render bloquea tráfico SMTP saliente (puertos 25, 465, 587, 2525). Para enviar emails en producción necesitas una API key de [SendGrid](https://sendgrid.com) (gratis: 100 emails/día).
+> **Nota:** Render bloquea trafico SMTP saliente (puertos 25, 465, 587, 2525). Para enviar emails en produccion necesitas una API key de [SendGrid](https://sendgrid.com) (gratis: 100 emails/dia).
 
 ### Frontend — Vercel
 
@@ -177,7 +177,7 @@ ng serve --open
 
 ---
 
-## 🌐 Endpoints de la API
+## Endpoints de la API
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
@@ -192,22 +192,22 @@ ng serve --open
 
 ---
 
-## 🔧 Herramientas Disponibles
+## Herramientas Disponibles
 
-| Herramienta | Local | Producción | Descripción |
+| Herramienta | Local | Produccion | Descripcion |
 |-------------|-------|------------|-------------|
-| `web_search` | ✅ | ✅ | Busca en la web usando DuckDuckGo |
-| `send_email` | ✅ (SMTP) | ✅ (SendGrid) | Envía correos electrónicos — usa SMTP en local, SendGrid API en producción |
-| `call_api` | ✅ | ✅ | Hace peticiones HTTP a APIs externas |
-| `read_file` | ✅ | ❌ | Lee archivos del sistema (deshabilitado en producción) |
-| `write_file` | ✅ | ❌ | Escribe archivos en el sistema (deshabilitado en producción) |
-| `run_command` | ✅ | ❌ | Ejecuta comandos shell restringidos (deshabilitado en producción) |
+| `web_search` | Si | Si | Busca en la web usando DuckDuckGo |
+| `send_email` | Si (SMTP) | Si (SendGrid) | Envia correos electronicos |
+| `call_api` | Si | Si | Hace peticiones HTTP a APIs externas |
+| `read_file` | Si | No | Lee archivos del sistema (deshabilitado en produccion) |
+| `write_file` | Si | No | Escribe archivos en el sistema (deshabilitado en produccion) |
+| `run_command` | Si | No | Ejecuta comandos shell restringidos (deshabilitado en produccion) |
 
-> Las tools locales se activan con `ENABLE_LOCAL_TOOLS=true` en `.env`. En producción por defecto están deshabilitadas.
+Las tools locales se activan con `ENABLE_LOCAL_TOOLS=true` en `.env`. En produccion por defecto estan deshabilitadas.
 
 ---
 
-## 💬 Ejemplos de Uso
+## Ejemplos de Uso
 
 Puedes escribir estos prompts directamente en el chat:
 
@@ -228,7 +228,7 @@ Puedes escribir estos prompts directamente en el chat:
 
 ---
 
-## 🔒 Seguridad
+## Seguridad
 
 AutoAgent incorpora las siguientes medidas de seguridad:
 
@@ -244,7 +244,7 @@ AutoAgent incorpora las siguientes medidas de seguridad:
 
 ---
 
-## 👨‍💻 Autor
+## Autor
 
 **Miguel Angel Reyes Torres**
 
