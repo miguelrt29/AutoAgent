@@ -1,8 +1,19 @@
 <div class="layout">
 
+  <div class="bg-glow"></div>
+
   <header class="header-bar">
     <div class="header-left">
-      <span class="logo-dot"></span>
+      <svg class="logo-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="16" height="16" rx="4" stroke="url(#logo-grad)" stroke-width="1.5"/>
+        <path d="M6 10L9 13L14 7" stroke="url(#logo-grad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="logo-grad" x1="2" y1="2" x2="18" y2="18">
+            <stop stop-color="#7c3aed"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+      </svg>
       <span class="logo-text">AutoAgent</span>
     </div>
     <div class="header-right">
@@ -16,12 +27,39 @@
       <div class="messages-area" #chatContainer>
 
         <div class="empty-state" *ngIf="chatSession.messages.length === 0">
-          <div class="empty-icon"><span class="empty-symbol">✦</span></div>
+          <div class="empty-glow-ring">
+            <div class="empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="7" width="18" height="12" rx="2"/>
+                <rect x="7" y="10" width="2.5" height="2.5" rx="0.5"/>
+                <rect x="14.5" y="10" width="2.5" height="2.5" rx="0.5"/>
+                <path d="M9 15h6"/>
+                <path d="M12 4v3"/>
+                <path d="M9 2l3 2 3-2"/>
+              </svg>
+            </div>
+          </div>
           <div class="empty-title">AutoAgent</div>
           <div class="empty-sub">Your AI-powered automation assistant</div>
         </div>
 
         <div class="message" *ngFor="let msg of chatSession.messages" [ngClass]="msg.role">
+          <div class="avatar" *ngIf="msg.role === 'assistant'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="7" width="18" height="12" rx="2"/>
+              <rect x="7" y="10" width="2.5" height="2.5" rx="0.5"/>
+              <rect x="14.5" y="10" width="2.5" height="2.5" rx="0.5"/>
+              <path d="M9 15h6"/>
+              <path d="M12 4v3"/>
+              <path d="M9 2l3 2 3-2"/>
+            </svg>
+          </div>
+          <div class="avatar user-avatar" *ngIf="msg.role === 'user'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-8 8-8s8 4 8 8"/>
+            </svg>
+          </div>
           <div class="bubble" [ngClass]="msg.role">
             <div class="message-content" *ngIf="msg.role === 'assistant'" [innerHTML]="msg.content | markdown"></div>
             <span *ngIf="msg.role === 'user'">{{ msg.content }}</span>
@@ -47,23 +85,39 @@
             #inputEl
           ></textarea>
           <button (click)="sendMessage()" [disabled]="chatSession.isStreaming || !userInput.trim()">
-            →
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
           </button>
         </div>
       </div>
     </div>
 
     <div class="tools-panel">
-      <div class="tools-header">TOOLS EXECUTED</div>
+      <div class="tools-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+        <span>Tools Executed</span>
+      </div>
 
       <div class="tool-list" *ngIf="chatSession.toolCalls.length > 0">
         <div class="tool-card" *ngFor="let tc of chatSession.toolCalls">
-          <span class="tool-badge" [ngClass]="badgeClass(tc.tool)">{{ tc.tool }}</span>
+          <div class="tool-card-top">
+            <span class="tool-badge" [ngClass]="badgeClass(tc.tool)">{{ tc.tool }}</span>
+            <span class="tool-time">{{ tc.timestamp | date:'HH:mm:ss' }}</span>
+          </div>
           <pre class="tool-json">{{ tc.input | json }}</pre>
         </div>
       </div>
 
-      <div class="tools-empty" *ngIf="chatSession.toolCalls.length === 0">No tools used yet</div>
+      <div class="tools-empty" *ngIf="chatSession.toolCalls.length === 0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a2a44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+        <span>No tools used yet</span>
+      </div>
     </div>
 
   </div>
