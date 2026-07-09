@@ -32,4 +32,5 @@ CONFIG = {
     "ALLOWED_COMMANDS": ALLOWED_COMMANDS,
     "SENDGRID_API_KEY": os.environ.get("SENDGRID_API_KEY", ""),
     "ENABLE_LOCAL_TOOLS": os.environ.get("ENABLE_LOCAL_TOOLS", "false").lower() == "true",
+    "DATABASE_URL": os.environ.get("DATABASE_URL", ""),
 }

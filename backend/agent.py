@@ -1,7 +1,10 @@
 import json
 
 from groq import Groq
+from sqlalchemy.orm import Session as DBSession
+
 from config import CONFIG
+from database import get_db_sync, add_message, get_messages, get_session, update_session_title, touch_session
 
 from tools.web_search import web_search
 from tools.file_ops import read_file, write_file
@@ -161,17 +164,56 @@ def _execute_tool(name: str, input_data: dict) -> dict:
 
 
 class Agent:
-    def __init__(self, session_id: str | None = None):
+    def __init__(self, session_id: str | None = None, db: DBSession | None = None):
         self.session_id = session_id
-        self.messages = SESSIONS.get(session_id, []) if session_id else []
+        self.db = db or get_db_sync()
+        self.messages = []
+        self._title_set = False
+        self._load_messages()
         self.client = Groq(api_key=CONFIG["GROQ_API_KEY"])
+
+    def _load_messages(self):
+        if not self.session_id:
+            return
+        msgs = get_messages(self.db, self.session_id)
+        for m in msgs:
+            entry: dict = {"role": m.role, "content": m.content}
+            if m.tool_calls:
+                try:
+                    entry["tool_calls"] = json.loads(m.tool_calls)
+                except (json.JSONDecodeError, TypeError):
+                    entry["tool_calls"] = []
+            if m.tool_call_id:
+                entry["tool_call_id"] = m.tool_call_id
+            self.messages.append(entry)
+
+    def _save_message(self, role: str, content: str = "", tool_calls: list | None = None, tool_call_id: str | None = None):
+        if not self.session_id:
+            return
+        add_message(self.db, self.session_id, role, content, tool_calls, tool_call_id)
+        touch_session(self.db, self.session_id)
+
+    def _auto_title(self, content: str):
+        if self._title_set or not self.session_id:
+            return
+        sess = get_session(self.db, self.session_id)
+        if sess and sess.title:
+            self._title_set = True
+            return
+        title = content[:60].strip()
+        if len(content) > 60:
+            title += "..."
+        update_session_title(self.db, self.session_id, title)
+        self._title_set = True
 
     def _save(self):
         if self.session_id:
-            SESSIONS[self.session_id] = self.messages
+            self.db.commit()
 
     def run(self, user_message: str):
         self.messages.append({"role": "user", "content": user_message})
+        self._save_message("user", user_message)
+        self._auto_title(user_message)
 
         enable_local = CONFIG["ENABLE_LOCAL_TOOLS"]
         available = "search the web, send emails, call an API"
@@ -208,18 +250,20 @@ RECOMMENDED FREE APIs:
             msg = response.choices[0].message
 
             if msg.tool_calls:
+                tc_list = [
+                    {
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                    }
+                    for tc in msg.tool_calls
+                ]
                 self.messages.append({
                     "role": "assistant",
                     "content": msg.content or "",
-                    "tool_calls": [
-                        {
-                            "id": tc.id,
-                            "type": "function",
-                            "function": {"name": tc.function.name, "arguments": tc.function.arguments},
-                        }
-                        for tc in msg.tool_calls
-                    ],
+                    "tool_calls": tc_list,
                 })
+                self._save_message("assistant", msg.content or "", tc_list)
 
                 for tc in msg.tool_calls:
                     name = tc.function.name
@@ -236,12 +280,14 @@ RECOMMENDED FREE APIs:
                         "tool_call_id": tc.id,
                         "content": str(result),
                     })
+                    self._save_message("tool", str(result), tool_call_id=tc.id)
 
                 continue
 
             content = msg.content or ""
             if content:
                 yield {"type": "text", "content": content}
+                self._save_message("assistant", content)
             yield {"type": "done"}
             self._save()
             return

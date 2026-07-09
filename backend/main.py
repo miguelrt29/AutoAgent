@@ -2,15 +2,18 @@
 
 import json
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session as DBSession
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from agent import Agent, SESSIONS, LOCAL_TOOLS_DEFS
 from config import CONFIG
 from schemas import ChatRequest, ToolEvent, TextEvent, ErrorEvent, DoneEvent
+from database import get_db, get_db_sync, create_session, get_session, get_all_sessions, delete_session, update_session_title, touch_session, add_message, get_messages
+from db_schemas import SessionOut, SessionDetailOut, MessageOut, UpdateTitleRequest
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -21,6 +24,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
+
 
 AVAILABLE_TOOLS = [
     {"name": "web_search", "description": "Search the web using DuckDuckGo", "parameters": ["query", "max_results"]},
@@ -59,18 +63,66 @@ async def health():
     return {"status": "ok", "version": "1.0.0"}
 
 
-@app.get("/sessions/{session_id}/history")
-async def session_history(session_id: str):
-    if session_id not in SESSIONS:
+# ─── Session endpoints ───
+
+
+@app.get("/sessions", response_model=list[SessionOut])
+async def list_sessions(db: DBSession = Depends(get_db)):
+    return get_all_sessions(db)
+
+
+@app.get("/sessions/{session_id}", response_model=SessionDetailOut)
+async def get_session_detail(session_id: str, db: DBSession = Depends(get_db)):
+    session = get_session(db, session_id)
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    return {"session_id": session_id, "messages": SESSIONS[session_id]}
+    messages = get_messages(db, session_id)
+    return SessionDetailOut(
+        id=session.id,
+        title=session.title,
+        created_at=session.created_at,
+        updated_at=session.updated_at,
+        messages=[MessageOut.model_validate(m) for m in messages],
+    )
+
+
+@app.put("/sessions/{session_id}/title")
+async def update_title(session_id: str, req: UpdateTitleRequest, db: DBSession = Depends(get_db)):
+    session = update_session_title(db, session_id, req.title)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return SessionOut.model_validate(session)
+
+
+@app.delete("/sessions/{session_id}")
+async def delete_session_endpoint(session_id: str, db: DBSession = Depends(get_db)):
+    if not delete_session(db, session_id):
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"ok": True}
+
+
+# ─── Chat endpoint ───
 
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
+    db = get_db_sync()
+    session_id = req.session_id
+
+    if session_id:
+        sess = get_session(db, session_id)
+        if not sess:
+            create_session(db, session_id)
+            touch_session(db, session_id)
+    else:
+        import uuid
+        session_id = str(uuid.uuid4())
+        create_session(db, session_id)
+
     async def event_stream():
+        nonlocal session_id
         try:
-            agent = Agent(session_id=req.session_id)
+            agent = Agent(session_id=session_id, db=db)
             for event in agent.run(req.message):
                 if event["type"] == "tool_call":
                     sse = ToolEvent(
@@ -90,6 +142,7 @@ async def chat(req: ChatRequest):
             yield f"data: {json.dumps(err.model_dump())}\n\n"
 
         finally:
+            db.close()
             done = DoneEvent(type="done")
             yield f"data: {json.dumps(done.model_dump())}\n\n"
 

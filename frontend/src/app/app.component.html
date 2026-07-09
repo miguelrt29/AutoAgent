@@ -1,1 +1,14 @@
-<app-chat></app-chat>
+<div class="app-layout">
+  <app-sidebar
+    *ngIf="sidebarVisible"
+    [sessions]="sessions"
+    [activeSessionId]="activeSessionId"
+    (selectSession)="onSelectSession($event)"
+    (newSession)="onNewSession()"
+    (deleteSession)="onDeleteSession($event)"
+  ></app-sidebar>
+  <app-chat
+    [sessionId]="activeSessionId"
+    (sessionCreated)="onSessionCreated($event)"
+  ></app-chat>
+</div>

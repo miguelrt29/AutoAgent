@@ -1,0 +1,10 @@
+.app-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+app-chat {
+  flex: 1;
+  min-width: 0;
+}
