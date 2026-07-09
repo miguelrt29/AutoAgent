@@ -65,6 +65,9 @@ export class ChatComponent {
 
     this.chatSession.isStreaming = true;
 
+    const assistantMsg: ChatMessage = { role: 'assistant', content: '', timestamp: new Date() };
+    this.chatSession.messages.push(assistantMsg);
+
     this.agentService.sendMessage(text, this.sessionId).subscribe({
       next: (event) => {
         switch (event.type) {
@@ -90,29 +93,44 @@ export class ChatComponent {
             break;
           }
 
-          case 'error':
-            this.chatSession.messages.push({
-              role: 'assistant',
-              content: `⚠ Error: ${event.message}`,
-              timestamp: new Date(),
-            });
+          case 'error': {
+            const last = this.chatSession.messages[this.chatSession.messages.length - 1];
+            if (last && last.role === 'assistant') {
+              last.content = `⚠ Error: ${event.message}`;
+            } else {
+              this.chatSession.messages.push({
+                role: 'assistant',
+                content: `⚠ Error: ${event.message}`,
+                timestamp: new Date(),
+              });
+            }
             break;
+          }
         }
         this.scrollToBottom();
       },
       error: (err) => {
         console.error('Stream error:', err);
         const msg = err.message || err.toString();
-        this.chatSession.messages.push({
-          role: 'assistant',
-          content: `Error de conexión: ${msg}`,
-          timestamp: new Date(),
-        });
+        const last = this.chatSession.messages[this.chatSession.messages.length - 1];
+        if (last && last.role === 'assistant') {
+          last.content = `Error de conexión: ${msg}`;
+        } else {
+          this.chatSession.messages.push({
+            role: 'assistant',
+            content: `Error de conexión: ${msg}`,
+            timestamp: new Date(),
+          });
+        }
         this.chatSession.isStreaming = false;
         this.scrollToBottom();
       },
       complete: () => {
         this.chatSession.isStreaming = false;
+        const last = this.chatSession.messages[this.chatSession.messages.length - 1];
+        if (last && last.role === 'assistant' && !last.content) {
+          this.chatSession.messages.pop();
+        }
         this.scrollToBottom();
       },
     });
