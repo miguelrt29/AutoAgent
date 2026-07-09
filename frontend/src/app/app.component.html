@@ -1,4 +1,4 @@
-<button class="hamburger" *ngIf="!sidebarVisible" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+<button class="hamburger" *ngIf="!sidebarVisible" (click)="toggleSidebar()" aria-label="Abrir menú">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="3" y1="6" x2="21" y2="6"/>
     <line x1="3" y1="12" x2="21" y2="12"/>
@@ -25,10 +25,10 @@
 
   <div class="confirm-overlay" *ngIf="confirmingId" (click)="cancelDelete()">
     <div class="confirm-modal" (click)="$event.stopPropagation()">
-      <p class="confirm-modal-text">Are you sure?</p>
+      <p class="confirm-modal-text">¿Estás seguro?</p>
       <div class="confirm-modal-actions">
-        <button class="confirm-modal-no" (click)="cancelDelete()">No</button>
-        <button class="confirm-modal-yes" (click)="confirmDelete()">Yes, delete</button>
+        <button class="confirm-modal-no" (click)="cancelDelete()">Cancelar</button>
+        <button class="confirm-modal-yes" (click)="confirmDelete()">Eliminar</button>
       </div>
     </div>
   </div>
