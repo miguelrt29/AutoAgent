@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { ChatComponent } from './components/chat/chat.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SessionService } from './services/session.service';
@@ -7,7 +8,7 @@ import { SessionSummary } from './models/session.models';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ChatComponent, SidebarComponent],
+  imports: [NgIf, ChatComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
