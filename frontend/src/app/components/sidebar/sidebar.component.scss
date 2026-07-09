@@ -8,12 +8,14 @@
   -webkit-backdrop-filter: blur(12px);
   border-right: 1px solid rgba(124, 58, 237, 0.08);
   overflow: hidden;
+  position: relative;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 }
 
 .sidebar-header {
@@ -180,14 +182,12 @@
 }
 
 .confirm-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 100;
 }
 
 .confirm-modal {
