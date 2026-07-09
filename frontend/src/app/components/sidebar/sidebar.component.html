@@ -16,7 +16,7 @@
     >
       <div class="sidebar-item-top">
         <span class="sidebar-item-title">{{ s.title || 'New conversation' }}</span>
-        <div class="sidebar-actions" *ngIf="confirmingId !== s.id">
+        <div class="sidebar-actions">
           <button class="sidebar-pin" (click)="onPin($event, s.id)" title="Pin">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="17" x2="12" y2="22"/>
@@ -29,11 +29,6 @@
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
             </svg>
           </button>
-        </div>
-        <div class="sidebar-confirm" *ngIf="confirmingId === s.id">
-          <span class="confirm-text">Delete?</span>
-          <button class="confirm-yes" (click)="confirmDelete(s.id)" title="Yes">Yes</button>
-          <button class="confirm-no" (click)="cancelDelete()" title="No">No</button>
         </div>
       </div>
       <span class="sidebar-item-date">{{ s.updated_at | date:'MMM d, HH:mm' }}</span>
@@ -51,4 +46,14 @@
     </svg>
     New Chat
   </button>
+</div>
+
+<div class="confirm-overlay" *ngIf="confirmingId" (click)="cancelDelete()">
+  <div class="confirm-modal" (click)="$event.stopPropagation()">
+    <p class="confirm-modal-text">Are you sure?</p>
+    <div class="confirm-modal-actions">
+      <button class="confirm-modal-no" (click)="cancelDelete()">No</button>
+      <button class="confirm-modal-yes" (click)="confirmDelete(confirmingId)">Yes, delete</button>
+    </div>
+  </div>
 </div>
