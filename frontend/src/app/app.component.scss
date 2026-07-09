@@ -13,6 +13,46 @@ app-chat {
   min-width: 0;
 }
 
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10001;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 8px;
+  color: #a78bfa;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hamburger:hover {
+  background: rgba(124, 58, 237, 0.25);
+}
+
+.mobile-sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .mobile-sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+  }
+}
+
 .confirm-overlay {
   position: fixed;
   inset: 0;

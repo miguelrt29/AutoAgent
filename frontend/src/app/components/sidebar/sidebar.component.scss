@@ -181,6 +181,12 @@
 
 @media (max-width: 768px) {
   :host {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+    border-right: 1px solid rgba(124, 58, 237, 0.2);
+    background: rgba(8, 8, 22, 0.95);
   }
 }
