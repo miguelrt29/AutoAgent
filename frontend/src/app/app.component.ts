@@ -15,12 +15,13 @@ import { SessionSummary } from './models/session.models';
 export class AppComponent implements OnInit {
   sessions: SessionSummary[] = [];
   activeSessionId: string | null = null;
-  sidebarVisible = window.innerWidth > 768;
+  sidebarVisible = true;
   confirmingId: string | null = null;
 
   constructor(private sessionService: SessionService) {}
 
   ngOnInit(): void {
+    this.sidebarVisible = window.innerWidth > 768;
     this.loadSessions();
   }
 
