@@ -552,7 +552,7 @@
 
 @media (max-width: 768px) {
   .header-bar {
-    padding: 0 14px;
+    padding: 0 14px 0 50px;
     height: 48px;
   }
   .badge { display: none; }
@@ -575,7 +575,7 @@
 }
 
 @media (max-width: 480px) {
-  .header-bar { padding: 0 10px; height: 44px; }
+  .header-bar { padding: 0 10px 0 48px; height: 44px; }
   .logo-text { font-size: 14px; }
   .logo-icon { width: 18px; height: 18px; }
 
@@ -598,7 +598,7 @@
 }
 
 @media (max-width: 360px) {
-  .header-bar { padding: 0 8px; height: 40px; }
+  .header-bar { padding: 0 8px 0 46px; height: 40px; }
   .logo-text { font-size: 12px; }
   .logo-icon { width: 16px; height: 16px; }
 
