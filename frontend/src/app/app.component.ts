@@ -53,6 +53,12 @@ export class AppComponent implements OnInit {
     });
   }
 
+  onPinSession(id: string): void {
+    this.sessionService.pinSession(id).subscribe({
+      next: () => this.loadSessions(),
+    });
+  }
+
   onSessionCreated(id: string): void {
     this.activeSessionId = id;
     this.loadSessions();

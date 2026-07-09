@@ -18,6 +18,7 @@ class MessageOut(BaseModel):
 class SessionOut(BaseModel):
     id: str
     title: Optional[str] = None
+    pinned: bool = False
     created_at: datetime
     updated_at: datetime
 
@@ -27,6 +28,7 @@ class SessionOut(BaseModel):
 class SessionDetailOut(BaseModel):
     id: str
     title: Optional[str] = None
+    pinned: bool = False
     created_at: datetime
     updated_at: datetime
     messages: list[MessageOut]

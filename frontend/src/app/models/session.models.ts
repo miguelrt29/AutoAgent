@@ -3,6 +3,7 @@ import { ChatMessage } from './agent.models';
 export interface SessionSummary {
   id: string;
   title: string | null;
+  pinned: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -10,6 +11,7 @@ export interface SessionSummary {
 export interface SessionDetail {
   id: string;
   title: string | null;
+  pinned: boolean;
   created_at: string;
   updated_at: string;
   messages: {

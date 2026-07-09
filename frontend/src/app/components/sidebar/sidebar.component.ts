@@ -15,6 +15,7 @@ export class SidebarComponent {
   @Output() selectSession = new EventEmitter<string>();
   @Output() newSession = new EventEmitter<void>();
   @Output() deleteSession = new EventEmitter<string>();
+  @Output() pinSession = new EventEmitter<string>();
 
   onSelect(id: string): void {
     this.selectSession.emit(id);
@@ -22,6 +23,11 @@ export class SidebarComponent {
 
   onNew(): void {
     this.newSession.emit();
+  }
+
+  onPin(event: Event, id: string): void {
+    event.stopPropagation();
+    this.pinSession.emit(id);
   }
 
   onDelete(event: Event, id: string): void {

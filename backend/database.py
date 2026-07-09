@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON
+from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from config import CONFIG
@@ -22,6 +22,7 @@ class SessionDB(Base):
 
     id = Column(String, primary_key=True)
     title = Column(String(255), nullable=True)
+    pinned = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -66,7 +67,7 @@ def get_session(db: Session, session_id: str) -> Optional[SessionDB]:
 
 
 def get_all_sessions(db: Session) -> list[SessionDB]:
-    return db.query(SessionDB).order_by(SessionDB.updated_at.desc()).all()
+    return db.query(SessionDB).order_by(SessionDB.pinned.desc(), SessionDB.updated_at.desc()).all()
 
 
 def delete_session(db: Session, session_id: str) -> bool:
@@ -94,6 +95,16 @@ def touch_session(db: Session, session_id: str) -> None:
     if sess:
         sess.updated_at = datetime.now(timezone.utc)
         db.commit()
+
+
+def toggle_pin_session(db: Session, session_id: str) -> Optional[SessionDB]:
+    sess = db.query(SessionDB).filter(SessionDB.id == session_id).first()
+    if not sess:
+        return None
+    sess.pinned = not sess.pinned
+    sess.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return sess
 
 
 def add_message(

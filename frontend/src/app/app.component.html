@@ -6,6 +6,7 @@
     (selectSession)="onSelectSession($event)"
     (newSession)="onNewSession()"
     (deleteSession)="onDeleteSession($event)"
+    (pinSession)="onPinSession($event)"
   ></app-sidebar>
   <app-chat
     [sessionId]="activeSessionId"

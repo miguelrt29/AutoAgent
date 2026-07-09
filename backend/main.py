@@ -12,7 +12,7 @@ from starlette.requests import Request
 from agent import Agent, SESSIONS, LOCAL_TOOLS_DEFS
 from config import CONFIG
 from schemas import ChatRequest, ToolEvent, TextEvent, ErrorEvent, DoneEvent
-from database import get_db, get_db_sync, create_session, get_session, get_all_sessions, delete_session, update_session_title, touch_session, add_message, get_messages
+from database import get_db, get_db_sync, create_session, get_session, get_all_sessions, delete_session, update_session_title, touch_session, toggle_pin_session, add_message, get_messages
 from db_schemas import SessionOut, SessionDetailOut, MessageOut, UpdateTitleRequest
 
 
@@ -89,6 +89,14 @@ async def get_session_detail(session_id: str, db: DBSession = Depends(get_db)):
 @app.put("/sessions/{session_id}/title")
 async def update_title(session_id: str, req: UpdateTitleRequest, db: DBSession = Depends(get_db)):
     session = update_session_title(db, session_id, req.title)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return SessionOut.model_validate(session)
+
+
+@app.put("/sessions/{session_id}/pin")
+async def pin_session(session_id: str, db: DBSession = Depends(get_db)):
+    session = toggle_pin_session(db, session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     return SessionOut.model_validate(session)

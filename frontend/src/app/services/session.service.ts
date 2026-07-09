@@ -25,4 +25,8 @@ export class SessionService {
   deleteSession(sessionId: string): Observable<{ ok: boolean }> {
     return this.http.delete<{ ok: boolean }>(`${this.baseUrl}/sessions/${sessionId}`);
   }
+
+  pinSession(sessionId: string): Observable<SessionSummary> {
+    return this.http.put<SessionSummary>(`${this.baseUrl}/sessions/${sessionId}/pin`, {});
+  }
 }

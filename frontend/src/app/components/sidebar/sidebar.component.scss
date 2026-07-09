@@ -69,12 +69,53 @@
 
 .sidebar-item-title {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   color: #e1e1ee;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+.pinned .sidebar-item-title {
+  color: #c4b5fd;
+}
+
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sidebar-pin {
+  opacity: 0;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: rgba(68, 68, 102, 0.5);
+  cursor: pointer;
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.sidebar-item:hover .sidebar-pin {
+  opacity: 1;
+}
+
+.sidebar-pin:hover {
+  color: #a78bfa;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.pinned .sidebar-pin {
+  opacity: 1;
+  color: #7c3aed;
 }
 
 .sidebar-delete {
