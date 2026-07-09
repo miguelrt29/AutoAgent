@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON, Boolean, text, func
+from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from config import CONFIG
@@ -16,13 +16,15 @@ engine = create_engine(DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False)
 Base = declarative_base()
 
+# In-memory pin set (doesn't require DB migration)
+PINNED_SESSIONS: set[str] = set()
+
 
 class SessionDB(Base):
     __tablename__ = "sessions"
 
     id = Column(String, primary_key=True)
     title = Column(String(255), nullable=True)
-    pinned = Column(Boolean, default=False, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -40,21 +42,6 @@ class MessageDB(Base):
 
 
 Base.metadata.create_all(bind=engine)
-
-# Migration: add pinned column to existing sessions table
-try:
-    from sqlalchemy import inspect as _insp
-    _inspector = _insp(engine)
-    _cols = [c["name"] for c in _inspector.get_columns("sessions")]
-    if "pinned" not in _cols:
-        with engine.connect() as conn:
-            if "sqlite" in DATABASE_URL:
-                conn.execute(text("ALTER TABLE sessions ADD COLUMN pinned BOOLEAN DEFAULT 0"))
-            else:
-                conn.execute(text("ALTER TABLE sessions ADD COLUMN pinned BOOLEAN DEFAULT FALSE"))
-            conn.commit()
-except Exception:
-    pass
 
 
 def get_db() -> Session:
@@ -82,7 +69,12 @@ def get_session(db: Session, session_id: str) -> Optional[SessionDB]:
 
 
 def get_all_sessions(db: Session) -> list[SessionDB]:
-    return db.query(SessionDB).order_by(func.coalesce(SessionDB.pinned, False).desc(), SessionDB.updated_at.desc()).all()
+    all_s = db.query(SessionDB).order_by(SessionDB.updated_at.desc()).all()
+    pinned = [s for s in all_s if s.id in PINNED_SESSIONS]
+    unpinned = [s for s in all_s if s.id not in PINNED_SESSIONS]
+    pinned.sort(key=lambda s: s.updated_at or datetime.min(timezone.utc), reverse=True)
+    unpinned.sort(key=lambda s: s.updated_at or datetime.min(timezone.utc), reverse=True)
+    return pinned + unpinned
 
 
 def delete_session(db: Session, session_id: str) -> bool:
@@ -116,7 +108,10 @@ def toggle_pin_session(db: Session, session_id: str) -> Optional[SessionDB]:
     sess = db.query(SessionDB).filter(SessionDB.id == session_id).first()
     if not sess:
         return None
-    sess.pinned = not sess.pinned
+    if session_id in PINNED_SESSIONS:
+        PINNED_SESSIONS.discard(session_id)
+    else:
+        PINNED_SESSIONS.add(session_id)
     sess.updated_at = datetime.now(timezone.utc)
     db.commit()
     return sess
