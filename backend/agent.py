@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 from groq import Groq
 from sqlalchemy.orm import Session as DBSession
@@ -221,6 +222,8 @@ class Agent:
             available += ", read/write files, run commands"
 
         system_prompt = f"""You are AutoAgent, a helpful AI assistant with access to tools.
+
+Current date: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}. The current year IS 2026. Do NOT tell users that 2026 hasn't happened yet — it has.
 
 IMPORTANT RULES:
 - For simple conversation (greetings, questions about yourself, general knowledge you already know): respond directly with text. DO NOT call any tool.
