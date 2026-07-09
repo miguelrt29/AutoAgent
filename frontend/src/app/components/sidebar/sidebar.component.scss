@@ -30,6 +30,32 @@
   flex-shrink: 0;
 }
 
+.sidebar-close {
+  display: none;
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(161, 161, 170, 0.6);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.sidebar-close:hover {
+  color: #a78bfa;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+@media (max-width: 768px) {
+  .sidebar-close {
+    display: flex;
+  }
+}
+
 .sidebar-list {
   flex: 1;
   overflow-y: auto;

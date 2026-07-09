@@ -16,6 +16,7 @@ export class SidebarComponent {
   @Output() newSession = new EventEmitter<void>();
   @Output() deleteSession = new EventEmitter<string>();
   @Output() pinSession = new EventEmitter<string>();
+  @Output() closeSidebar = new EventEmitter<void>();
 
   onSelect(id: string): void {
     this.selectSession.emit(id);

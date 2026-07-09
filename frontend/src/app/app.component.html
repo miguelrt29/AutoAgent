@@ -16,6 +16,7 @@
     (newSession)="onNewSession()"
     (deleteSession)="onDeleteRequest($event)"
     (pinSession)="onPinSession($event)"
+    (closeSidebar)="toggleSidebar()"
   ></app-sidebar>
   <app-chat
     [sessionId]="activeSessionId"
