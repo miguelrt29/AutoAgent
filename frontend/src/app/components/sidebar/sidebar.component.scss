@@ -8,14 +8,12 @@
   -webkit-backdrop-filter: blur(12px);
   border-right: 1px solid rgba(124, 58, 237, 0.08);
   overflow: hidden;
-  position: relative;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative;
 }
 
 .sidebar-header {
@@ -179,68 +177,6 @@
 .sidebar-new:hover {
   background: rgba(124, 58, 237, 0.15);
   border-color: rgba(124, 58, 237, 0.25);
-}
-
-.confirm-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.confirm-modal {
-  background: #1a1a2e;
-  border: 1px solid rgba(124, 58, 237, 0.2);
-  border-radius: 12px;
-  padding: 24px 28px;
-  min-width: 260px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-.confirm-modal-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #e1e1ee;
-  text-align: center;
-  margin: 0 0 20px;
-}
-
-.confirm-modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.confirm-modal-no,
-.confirm-modal-yes {
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.15s;
-}
-
-.confirm-modal-no {
-  background: rgba(68, 68, 102, 0.2);
-  color: rgba(161, 161, 170, 0.7);
-}
-
-.confirm-modal-no:hover {
-  background: rgba(68, 68, 102, 0.3);
-}
-
-.confirm-modal-yes {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-.confirm-modal-yes:hover {
-  background: rgba(239, 68, 68, 0.25);
 }
 
 @media (max-width: 768px) {

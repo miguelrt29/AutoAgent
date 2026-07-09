@@ -47,13 +47,3 @@
     New Chat
   </button>
 </div>
-
-<div class="confirm-overlay" *ngIf="confirmingId" (click)="cancelDelete()">
-  <div class="confirm-modal" (click)="$event.stopPropagation()">
-    <p class="confirm-modal-text">Are you sure?</p>
-    <div class="confirm-modal-actions">
-      <button class="confirm-modal-no" (click)="cancelDelete()">No</button>
-      <button class="confirm-modal-yes" (click)="confirmDelete(confirmingId)">Yes, delete</button>
-    </div>
-  </div>
-</div>

@@ -17,35 +17,21 @@ export class SidebarComponent {
   @Output() deleteSession = new EventEmitter<string>();
   @Output() pinSession = new EventEmitter<string>();
 
-  confirmingId: string | null = null;
-
   onSelect(id: string): void {
-    if (this.confirmingId) return;
     this.selectSession.emit(id);
   }
 
   onNew(): void {
-    this.confirmingId = null;
     this.newSession.emit();
   }
 
   onPin(event: Event, id: string): void {
     event.stopPropagation();
-    this.confirmingId = null;
     this.pinSession.emit(id);
   }
 
   onDelete(event: Event, id: string): void {
     event.stopPropagation();
-    this.confirmingId = id;
-  }
-
-  confirmDelete(id: string): void {
-    this.confirmingId = null;
     this.deleteSession.emit(id);
-  }
-
-  cancelDelete(): void {
-    this.confirmingId = null;
   }
 }

@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   sessions: SessionSummary[] = [];
   activeSessionId: string | null = null;
   sidebarVisible = true;
+  confirmingId: string | null = null;
 
   constructor(private sessionService: SessionService) {}
 
@@ -42,7 +43,14 @@ export class AppComponent implements OnInit {
     this.activeSessionId = null;
   }
 
-  onDeleteSession(id: string): void {
+  onDeleteRequest(id: string): void {
+    this.confirmingId = id;
+  }
+
+  confirmDelete(): void {
+    const id = this.confirmingId;
+    this.confirmingId = null;
+    if (!id) return;
     this.sessionService.deleteSession(id).subscribe({
       next: () => {
         this.sessions = this.sessions.filter(s => s.id !== id);
@@ -51,6 +59,10 @@ export class AppComponent implements OnInit {
         }
       },
     });
+  }
+
+  cancelDelete(): void {
+    this.confirmingId = null;
   }
 
   onPinSession(id: string): void {
