@@ -15,7 +15,7 @@ import { SessionSummary } from './models/session.models';
 export class AppComponent implements OnInit {
   sessions: SessionSummary[] = [];
   activeSessionId: string | null = null;
-  sidebarVisible = true;
+  sidebarVisible = window.innerWidth > 768;
   confirmingId: string | null = null;
 
   constructor(private sessionService: SessionService) {}
