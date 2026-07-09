@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON, Boolean
+from sqlalchemy import create_engine, Column, String, Text, Integer, DateTime, JSON, Boolean, text, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from config import CONFIG
@@ -22,7 +22,7 @@ class SessionDB(Base):
 
     id = Column(String, primary_key=True)
     title = Column(String(255), nullable=True)
-    pinned = Column(Boolean, default=False, nullable=False)
+    pinned = Column(Boolean, default=False, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -40,6 +40,21 @@ class MessageDB(Base):
 
 
 Base.metadata.create_all(bind=engine)
+
+# Migration: add pinned column to existing sessions table
+try:
+    from sqlalchemy import inspect as _insp
+    _inspector = _insp(engine)
+    _cols = [c["name"] for c in _inspector.get_columns("sessions")]
+    if "pinned" not in _cols:
+        with engine.connect() as conn:
+            if "sqlite" in DATABASE_URL:
+                conn.execute(text("ALTER TABLE sessions ADD COLUMN pinned BOOLEAN DEFAULT 0"))
+            else:
+                conn.execute(text("ALTER TABLE sessions ADD COLUMN pinned BOOLEAN DEFAULT FALSE"))
+            conn.commit()
+except Exception:
+    pass
 
 
 def get_db() -> Session:
@@ -67,7 +82,7 @@ def get_session(db: Session, session_id: str) -> Optional[SessionDB]:
 
 
 def get_all_sessions(db: Session) -> list[SessionDB]:
-    return db.query(SessionDB).order_by(SessionDB.pinned.desc(), SessionDB.updated_at.desc()).all()
+    return db.query(SessionDB).order_by(func.coalesce(SessionDB.pinned, False).desc(), SessionDB.updated_at.desc()).all()
 
 
 def delete_session(db: Session, session_id: str) -> bool:
