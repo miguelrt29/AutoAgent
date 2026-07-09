@@ -145,7 +145,7 @@ export class ChatComponent {
   }
 
   private scrollToBottom(): void {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       if (this.chatContainer) {
         this.chatContainer.nativeElement.scrollTop =
           this.chatContainer.nativeElement.scrollHeight;
