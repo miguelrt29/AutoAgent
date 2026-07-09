@@ -37,8 +37,12 @@ Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en
 - **Sidebar de conversaciones** — Lista persistente con seleccion, titulos generados automaticamente y orden por ultima actividad
 - **Anclar chats** — Fija conversaciones importantes al inicio del sidebar (en memoria, sin migraciones)
 - **Modal de confirmacion** — Dialogo centrado antes de eliminar una conversacion
+- **Menu responsive** — Sidebar como overlay en movil y tablet con boton hamburguesa (≤1024px)
+- **Interfaz en espanol** — Todo el texto visible del frontend esta localizado al espanol
+- **Consciencia temporal** — El agente conoce la fecha actual para evitar rechazar datos de 2026
+- **Identidad del creador** — El agente responde quien lo desarrollo cuando se le pregunta
 - **Panel de herramientas en vivo** — Visualiza cada tool que el agente ejecuta, con sus argumentos
-- **Dark theme** — Interfaz oscura moderna con acentos morados
+- **Dark theme** — Interfaz oscura moderna con acentos morados y glassmorphism
 - **Despliegue cloud** — Backend en Render, frontend en Vercel
 
 ---
@@ -51,8 +55,8 @@ Construido con **FastAPI + Groq (Qwen 3 32B)** en el backend y **Angular 17** en
 | FastAPI | TypeScript 5.4 | Vercel (frontend) |
 | Groq SDK (Qwen 3 32B) | RxJS 7.8 | SendGrid (email) |
 | DuckDuckGo Search (ddgs) | SCSS | Groq (LLM) |
-| SMTP / SendGrid API | Fetch API (SSE) | |
-| Pydantic | Karma + Jasmine | |
+| SMTP / SendGrid API | Fetch API (SSE) | PostgreSQL / SQLite |
+| SQLAlchemy + Pydantic | Karma + Jasmine | |
 | Uvicorn | | |
 
 ---
