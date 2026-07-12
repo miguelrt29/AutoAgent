@@ -236,10 +236,10 @@ IMPORTANT RULES:
 - When the user asks for data (prices, rates, weather, etc.), call the API immediately. Do NOT explain what APIs exist — just call the right one and return the data.
 
 RECOMMENDED FREE APIs:
-- Bitcoin/crypto price → CoinCap: https://api.coincap.io/v2/rates/bitcoin (no API key needed)
-- Exchange rates → CoinCap: https://api.coincap.io/v2/rates/{{currency}} (e.g. colombian-peso)
+- Bitcoin/crypto price → Binance: https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT (no API key needed)
+- Exchange rates → Frankfurter: https://api.frankfurter.app/latest?from=USD (no API key needed)
 - Weather → Open-Meteo: https://api.open-meteo.com/v1/forecast (no API key needed)
-- DO NOT use CoinGecko — it has strict rate limits (429 errors).
+- DO NOT use CoinGecko or CoinCap — they have strict rate limits or DNS issues.
 - Always prefer APIs that don't require authentication keys."""
 
         while True:
