@@ -170,6 +170,7 @@ class Agent:
         self.db = db or get_db_sync()
         self.messages = []
         self._title_set = False
+        self._pending_tool_calls: list = []
         self._load_messages()
         self.client = Groq(api_key=CONFIG["GROQ_API_KEY"])
 
@@ -243,6 +244,40 @@ RECOMMENDED FREE APIs:
 - Always prefer APIs that don't require authentication keys."""
 
         while True:
+            # Process pending tool calls from a previous LLM response (one at a time)
+            if self._pending_tool_calls:
+                tc = self._pending_tool_calls.pop(0)
+                tc_list = [
+                    {
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                    }
+                ]
+                self.messages.append({
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": tc_list,
+                })
+                self._save_message("assistant", "", tc_list)
+
+                name = tc.function.name
+                tool_input = json.loads(tc.function.arguments)
+                if isinstance(tool_input, str):
+                    try:
+                        tool_input = json.loads(tool_input)
+                    except json.JSONDecodeError:
+                        tool_input = {}
+                yield {"type": "tool_call", "tool": name, "input": tool_input}
+                result = _execute_tool(name, tool_input)
+                self.messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": str(result),
+                })
+                self._save_message("tool", str(result), tool_call_id=tc.id)
+                continue
+
             response = self.client.chat.completions.create(
                 model="qwen/qwen3-32b",
                 messages=[{"role": "system", "content": system_prompt}] + self.messages,
@@ -254,13 +289,17 @@ RECOMMENDED FREE APIs:
             msg = response.choices[0].message
 
             if msg.tool_calls:
+                # Execute only the FIRST tool call; queue the rest so the LLM
+                # sees each result before deciding the next action.
+                first_tc = msg.tool_calls[0]
+                remaining = msg.tool_calls[1:]
+
                 tc_list = [
                     {
-                        "id": tc.id,
+                        "id": first_tc.id,
                         "type": "function",
-                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                        "function": {"name": first_tc.function.name, "arguments": first_tc.function.arguments},
                     }
-                    for tc in msg.tool_calls
                 ]
                 self.messages.append({
                     "role": "assistant",
@@ -269,22 +308,24 @@ RECOMMENDED FREE APIs:
                 })
                 self._save_message("assistant", msg.content or "", tc_list)
 
-                for tc in msg.tool_calls:
-                    name = tc.function.name
-                    tool_input = json.loads(tc.function.arguments)
-                    if isinstance(tool_input, str):
-                        try:
-                            tool_input = json.loads(tool_input)
-                        except json.JSONDecodeError:
-                            tool_input = {}
-                    yield {"type": "tool_call", "tool": name, "input": tool_input}
-                    result = _execute_tool(name, tool_input)
-                    self.messages.append({
-                        "role": "tool",
-                        "tool_call_id": tc.id,
-                        "content": str(result),
-                    })
-                    self._save_message("tool", str(result), tool_call_id=tc.id)
+                name = first_tc.function.name
+                tool_input = json.loads(first_tc.function.arguments)
+                if isinstance(tool_input, str):
+                    try:
+                        tool_input = json.loads(tool_input)
+                    except json.JSONDecodeError:
+                        tool_input = {}
+                yield {"type": "tool_call", "tool": name, "input": tool_input}
+                result = _execute_tool(name, tool_input)
+                self.messages.append({
+                    "role": "tool",
+                    "tool_call_id": first_tc.id,
+                    "content": str(result),
+                })
+                self._save_message("tool", str(result), tool_call_id=first_tc.id)
+
+                if remaining:
+                    self._pending_tool_calls = remaining
 
                 continue
 
