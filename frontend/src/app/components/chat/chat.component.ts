@@ -75,6 +75,15 @@ export class ChatComponent implements OnChanges {
     this.pendingSessionId = null;
   }
 
+  hasAssistantContent(): boolean {
+    const msgs = this.chatSession.messages;
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      if (msgs[i].role === 'assistant' && msgs[i].content) return true;
+      if (msgs[i].role === 'user') break;
+    }
+    return false;
+  }
+
   badgeClass(tool: string): string {
     const map: Record<string, string> = {
       web_search: 'web_search',
