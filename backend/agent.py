@@ -279,11 +279,11 @@ RECOMMENDED FREE APIs:
                 continue
 
             response = self.client.chat.completions.create(
-                model="qwen/qwen3-32b",
+                model="openai/gpt-oss-120b",
                 messages=[{"role": "system", "content": system_prompt}] + self.messages,
                 tools=TOOLS,
                 tool_choice="auto",
-                max_tokens=2048,
+                max_tokens=4096,
             )
 
             msg = response.choices[0].message
